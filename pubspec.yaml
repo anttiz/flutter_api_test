@@ -10,7 +10,10 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.0
-
+  amazon_cognito_identity_dart_2: ^3.3.0
+  shared_preferences: ^2.1.1
+  flutter_dotenv:
+  http:
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +22,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env

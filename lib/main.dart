@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api_test/pages/home_page.dart';
 import 'package:flutter_api_test/pages/login_page.dart';
+import 'package:flutter_api_test/services/user.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  await dotenv.load();
+  var service = UserService();
+  await service.init();
+  var user = await service.getCurrentUser();
+  var initialRoute = user != null ? '/home' : '/';
+  runApp(MainApp(initialRoute:initialRoute, user: user));
 }
 
 class MyAppState extends ChangeNotifier {
-  var loggedIn = false;
+  var _loggedIn = false;
+  bool get isLoggedIn => _loggedIn;
+
+  void setLoggedIn(bool loggedIn) {
+    _loggedIn = loggedIn;
+    // This call tells the widgets that are listening to this model to rebuild.
+    notifyListeners();
+  }
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final String initialRoute;
+  final User? user;
+
+  MainApp({required this.initialRoute, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +37,15 @@ class MainApp extends StatelessWidget {
       create: (context) => MyAppState(),
       child: MaterialApp(
         title: 'Test app',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-      ),
-      home: LoginPage()
+        initialRoute: initialRoute,
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        ),
+        routes: {
+        '/': (context) => LoginPage(),
+        '/home': (context) => HomePage(user: user!),
+      },
       ),
     );
   }
