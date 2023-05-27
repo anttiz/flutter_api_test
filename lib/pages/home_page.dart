@@ -30,13 +30,28 @@ class _HomePageState extends State<HomePage> {
               appBar: AppBar(
                 title: const Text('Home Page'),
               ),
-              body: Column(
-                children: [
-                  Text(widget.user.name!),
-                  Text(widget.user.email!),
-                  Text(items.length.toString())
-                ],
-              ));
+              body: Column(children: [
+                Text(widget.user.name!),
+                Text(widget.user.email!),
+                Text(items.length.toString()),
+                ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(8),
+                    itemCount: items.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: 50,
+                        color: Colors.amber,
+                        child: Row(
+                          children: [
+                            Center(child: Text(items[index].todoId)),
+                            Center(child: Text(items[index].name)),
+                          ],
+                        ),
+                      );
+                    })
+              ]));
         });
   }
 }
