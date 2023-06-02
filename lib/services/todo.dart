@@ -11,6 +11,23 @@ class TodoItem {
   factory TodoItem.fromJson(json) {
     return TodoItem(json['name'], json['todoId']);
   }
+
+  static List<String> columns = ['name', 'todoId'];
+
+  Map<String, dynamic> _toMap() {
+    return {
+      'name': name,
+      'todoId': todoId,
+    };
+  }
+
+  dynamic get(String propertyName) {
+    var mapRep = _toMap();
+    if (mapRep.containsKey(propertyName)) {
+      return mapRep[propertyName];
+    }
+    throw ArgumentError('property not found');
+  }
 }
 
 class TodoService {
@@ -29,13 +46,13 @@ class TodoService {
     final signedRequest =
         SigV4Request(awsSigV4Client, method: 'GET', path: '/todo');
         */
-    final response = await http.get(
-        Uri.parse(dotenv.env['TODO_ENDPOINT']!),
-        headers: headers
-        // headers: signedRequest.headers as Map<String, String>);
-    );
+    final response =
+        await http.get(Uri.parse(dotenv.env['TODO_ENDPOINT']!), headers: headers
+            // headers: signedRequest.headers as Map<String, String>);
+            );
     Iterable l = json.decode(response.body);
-    List<TodoItem> items = List<TodoItem>.from(l.map((model)=> TodoItem.fromJson(model)));
+    List<TodoItem> items =
+        List<TodoItem>.from(l.map((model) => TodoItem.fromJson(model)));
     return items;
   }
 }

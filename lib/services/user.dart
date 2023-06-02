@@ -191,14 +191,14 @@ class UserService {
 
     return user;
   }
+  */
 
   Future<void> signOut() async {
     if (credentials != null) {
-      await credentials.resetAwsCredentials();
+      await credentials!.resetAwsCredentials();
     }
     if (_cognitoUser != null) {
-      return _cognitoUser.signOut();
+      return _cognitoUser!.signOut();
     }
   }
-  */
 }

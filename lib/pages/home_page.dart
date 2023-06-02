@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_api_test/components/user_details.dart';
+import 'package:flutter_api_test/pages/login_page.dart';
 import 'package:flutter_api_test/services/todo.dart';
 
+import '../components/todo_list.dart';
 import '../services/user.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,10 +17,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<TodoItem> items = [];
+  final _userService = UserService();
 
   Future<TodoService> _getTodoService(BuildContext context) async {
     var todoService = TodoService();
-    items = await todoService.getTodoItems();
+    // TODO items = await todoService.getTodoItems();
+    items = <TodoItem>[
+      TodoItem('test1 pretty long name', 'id1-xxx-yyy-zzz'),
+      TodoItem('test2 pretty long name', 'id2-xxx-yyy-zzz'),
+    ];
     return todoService;
   }
 
@@ -27,31 +35,60 @@ class _HomePageState extends State<HomePage> {
         future: _getTodoService(context),
         builder: (context, AsyncSnapshot<TodoService> snapshot) {
           return Scaffold(
-              appBar: AppBar(
-                title: const Text('Home Page'),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.endFloat,
+              floatingActionButton: SizedBox(
+                height: 100,
+                width: 100,
+                child: FloatingActionButton(
+                  // shape:
+                      // BeveledRectangleBorder(borderRadius: BorderRadius.zero),
+                  onPressed: () {
+                    print("Button is pressed.");
+                    //task to execute when this button is pressed
+                  },
+                  tooltip: "Add new TODO",
+                  child: Icon(Icons.add)
+                ),
               ),
-              body: Column(children: [
-                Text(widget.user.name!),
-                Text(widget.user.email!),
-                Text(items.length.toString()),
-                ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(8),
-                    itemCount: items.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        height: 50,
-                        color: Colors.amber,
-                        child: Row(
-                          children: [
-                            Center(child: Text(items[index].todoId)),
-                            Center(child: Text(items[index].name)),
-                          ],
-                        ),
-                      );
-                    })
-              ]));
+              appBar: AppBar(
+                  elevation: 4,
+                  title: const Text('Home Page'),
+                  leading: IconButton(
+                    tooltip:
+                        MaterialLocalizations.of(context).openAppDrawerTooltip,
+                    icon: const Icon(Icons.menu),
+                    onPressed: () {},
+                  ),
+                  actions: [
+                    PopupMenuButton<Text>(
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            child: Text(
+                              'Log out',
+                            ),
+                            onTap: () async {
+                              await _userService.signOut();
+                              // ignore: use_build_context_synchronously
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
+                              );
+                            },
+                          ),
+                        ];
+                      },
+                    )
+                  ]),
+              body: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    UserDetails(widget.user, items.length),
+                    TodoList(items)
+                  ]));
         });
   }
 }
