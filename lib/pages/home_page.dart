@@ -3,6 +3,7 @@ import 'package:flutter_api_test/components/user_details.dart';
 import 'package:flutter_api_test/pages/login_page.dart';
 import 'package:flutter_api_test/services/todo.dart';
 
+import '../components/dialog.dart';
 import '../components/todo_list.dart';
 import '../services/user.dart';
 
@@ -21,7 +22,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<TodoService> _getTodoService(BuildContext context) async {
     var todoService = TodoService();
-    // TODO items = await todoService.getTodoItems();
+    // REAL items = await todoService.getTodoItems();
     items = <TodoItem>[
       TodoItem('test1 pretty long name', 'id1-xxx-yyy-zzz'),
       TodoItem('test2 pretty long name', 'id2-xxx-yyy-zzz'),
@@ -44,8 +45,7 @@ class _HomePageState extends State<HomePage> {
                   // shape:
                       // BeveledRectangleBorder(borderRadius: BorderRadius.zero),
                   onPressed: () {
-                    print("Button is pressed.");
-                    //task to execute when this button is pressed
+                    Navigator.of(context).restorablePush(dialogBuilder);
                   },
                   tooltip: "Add new TODO",
                   child: Icon(Icons.add)
