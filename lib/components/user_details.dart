@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_api_test/services/user.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/user_provider.dart';
 
 class UserDetails extends StatelessWidget {
-  final User user;
   final int itemCount;
 
-  UserDetails(this.user, this.itemCount);
+  UserDetails(this.itemCount);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('User: ${user.name!}'),
-          Text('Email: ${user.email!}'),
-          Text('TODO items: ${itemCount.toString()}'),
-        ],
-      ),
-    );
+        padding: EdgeInsets.all(16),
+        child: Consumer<UserProvider>(builder: (context, provider, child) {
+          if (provider.user!.name == null) {
+            return Column();
+          }
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('User: ${provider.user!.name!}'),
+              Text('Email: ${provider.user!.email!}'),
+              Text('TODO items: ${itemCount.toString()}'),
+            ],
+          );
+        }));
   }
 }

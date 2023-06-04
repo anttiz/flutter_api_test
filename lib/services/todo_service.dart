@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_api_test/services/user.dart';
+import 'package:flutter_api_test/services/user_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,15 +17,17 @@ class TodoService {
     final response = await http.get(Uri.parse(dotenv.env['TODO_ENDPOINT']!),
         headers: headers);
     final json = jsonDecode(response.body) as List;
+    // REAL
+    /*
     List<TodoItem> items =
         json.map((model) => TodoItem.fromJson(model)).toList();
+        */
     // FAKE
-    /*
+
     List<TodoItem> items = <TodoItem>[
       TodoItem(name: 'test1 pretty long name', todoId: 'id1-xxx-yyy-zzz'),
       TodoItem(name: 'test2 pretty long name', todoId: 'id2-xxx-yyy-zzz'),
     ];
-    */
 
     return items;
   }

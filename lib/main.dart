@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_api_test/pages/home_page.dart';
 import 'package:flutter_api_test/pages/login_page.dart';
 import 'package:flutter_api_test/provider/todo_provider.dart';
-import 'package:flutter_api_test/services/user.dart';
+import 'package:flutter_api_test/provider/user_provider.dart';
+import 'package:flutter_api_test/services/user_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,7 @@ void main() async {
   await service.init();
   var user = await service.getCurrentUser();
   var initialRoute = user != null ? '/home' : '/';
-  runApp(MainApp(initialRoute:initialRoute, user: user));
+  runApp(MainApp(initialRoute:initialRoute));
 }
 
 class MyAppState extends ChangeNotifier {
@@ -28,9 +29,7 @@ class MyAppState extends ChangeNotifier {
 
 class MainApp extends StatelessWidget {
   final String initialRoute;
-  final User? user;
-
-  MainApp({required this.initialRoute, required this.user});
+  MainApp({required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +39,8 @@ class MainApp extends StatelessWidget {
           create: (context) => MyAppState()),
         ChangeNotifierProvider(
           create: (context) => TodoProvider()),
+        ChangeNotifierProvider(
+          create: (context) => UserProvider()),
       ],
       child: MaterialApp(
         title: 'Test app',
@@ -51,7 +52,7 @@ class MainApp extends StatelessWidget {
         ),
         routes: {
         '/': (context) => LoginPage(),
-        '/home': (context) => HomePage(user: user!),
+        '/home': (context) => HomePage(),
       },
       ),
     );

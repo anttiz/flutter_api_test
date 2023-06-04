@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 
-import '../services/user.dart';
+import '../model/user.dart';
+import '../provider/user_provider.dart';
+import '../services/user_service.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,21 +14,25 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _userService = UserService();
-  User _user = User();
   TextEditingController usernameController =
       TextEditingController(text: dotenv.env['TODO_USERNAME']);
   TextEditingController passwordController =
       TextEditingController(text: dotenv.env['TODO_PASSWORD']);
 
-  void submit(BuildContext context) async {
+  void submit(
+      {required BuildContext context,
+      required UserProvider provider,
+      required String username,
+      required String password}) async {
     _formKey.currentState?.save();
-    await _userService.init();
-    _user = await _userService.login(_user.username!, _user.password!);
+    var userService = UserService();
+    await userService.init();
+    User user = await userService.login(username, password);
+    provider.user = user;
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomePage(user: _user)),
+      MaterialPageRoute(builder: (context) => HomePage()),
     );
   }
 
@@ -76,13 +83,16 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16.0),
-                child: Center(
-                  child: ElevatedButton(
+                child: Center(child:
+                    Consumer<UserProvider>(builder: (context, provider, child) {
+                  return ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        _user.username = usernameController.text;
-                        _user.password = passwordController.text;
-                        submit(context);
+                        submit(
+                            context: context,
+                            provider: provider,
+                            username: usernameController.text,
+                            password: passwordController.text);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Please fill input')),
@@ -90,8 +100,8 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                     child: const Text('Submit'),
-                  ),
-                ),
+                  );
+                })),
               ),
             ],
           ),

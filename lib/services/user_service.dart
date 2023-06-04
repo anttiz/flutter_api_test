@@ -1,66 +1,10 @@
-import 'dart:convert';
-
 import 'package:amazon_cognito_identity_dart_2/cognito.dart';
+import 'package:flutter_api_test/services/storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Storage extends CognitoStorage {
-  SharedPreferences _prefs;
-  Storage(this._prefs);
+import '../model/user.dart';
 
-  @override
-  Future getItem(String key) async {
-    String item;
-    try {
-      item = json.decode(_prefs.getString(key)!);
-    } catch (e) {
-      return null;
-    }
-    return item;
-  }
-
-  @override
-  Future setItem(String key, value) async {
-    await _prefs.setString(key, json.encode(value));
-    return getItem(key);
-  }
-
-  @override
-  Future removeItem(String key) async {
-    final item = getItem(key);
-    await _prefs.remove(key);
-    return item;
-  }
-
-  @override
-  Future<void> clear() async {
-    await _prefs.clear();
-  }
-}
-
-class User {
-  String? username;
-  String? email;
-  String? name;
-  String? password;
-  bool confirmed = false;
-  bool hasAccess = false;
-
-  User({this.username, this.name});
-
-  /// Decode user from Cognito User Attributes
-  factory User.fromUserAttributes(List<CognitoUserAttribute> attributes) {
-    final user = User();
-    for (var attribute in attributes) {
-      if (attribute.getName() == 'email') {
-        user.email = attribute.getValue();
-      } else if (attribute.getName() == 'name') {
-        user.name = attribute.getValue();
-      }
-    }
-    return user;
-  }
-}
 
 class UserService {
   final CognitoUserPool _userPool = CognitoUserPool(
