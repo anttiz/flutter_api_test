@@ -3,32 +3,7 @@ import 'package:flutter_api_test/services/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-class TodoItem {
-  String name;
-  String todoId;
-  TodoItem(this.name, this.todoId);
-
-  factory TodoItem.fromJson(json) {
-    return TodoItem(json['name'], json['todoId']);
-  }
-
-  static List<String> columns = ['name', 'todoId'];
-
-  Map<String, dynamic> _toMap() {
-    return {
-      'name': name,
-      'todoId': todoId,
-    };
-  }
-
-  dynamic get(String propertyName) {
-    var mapRep = _toMap();
-    if (mapRep.containsKey(propertyName)) {
-      return mapRep[propertyName];
-    }
-    throw ArgumentError('property not found');
-  }
-}
+import '../model/todo_item.dart';
 
 class TodoService {
   TodoService();
@@ -41,9 +16,17 @@ class TodoService {
         {'Authorization': 'Bearer ${session!.getIdToken().getJwtToken()}'});
     final response = await http.get(Uri.parse(dotenv.env['TODO_ENDPOINT']!),
         headers: headers);
-    Iterable l = json.decode(response.body);
+    final json = jsonDecode(response.body) as List;
     List<TodoItem> items =
-        List<TodoItem>.from(l.map((model) => TodoItem.fromJson(model)));
+        json.map((model) => TodoItem.fromJson(model)).toList();
+    // FAKE
+    /*
+    List<TodoItem> items = <TodoItem>[
+      TodoItem(name: 'test1 pretty long name', todoId: 'id1-xxx-yyy-zzz'),
+      TodoItem(name: 'test2 pretty long name', todoId: 'id2-xxx-yyy-zzz'),
+    ];
+    */
+
     return items;
   }
 
