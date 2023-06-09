@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
           ),
           appBar: AppBar(
               elevation: 4,
-              title: const Text('Home Page'),
+              title: const Text('Todo list'),
               leading: IconButton(
                 tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
                 icon: const Icon(Icons.menu),

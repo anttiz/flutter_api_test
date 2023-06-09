@@ -11,21 +11,12 @@ class TodoProvider extends ChangeNotifier {
 
   Future<void> addTodo(String name) async {
     // isLoading = true;
-    notifyListeners();
+    // notifyListeners();
 
     final response = await _service.addTodo(name);
-    _todos.add(response);
-    // isLoading = false;
-    notifyListeners();
-  }
-
-  void add(TodoItem item) {
-    _todos.add(item);
-    notifyListeners();
-  }
-
-  void removeAll() {
-    _todos.clear();
+    if (!_service.isFake) {
+      _todos.add(response);
+    }
     notifyListeners();
   }
 
@@ -36,6 +27,12 @@ class TodoProvider extends ChangeNotifier {
     final response = await _service.getTodoItems();
     _todos = response;
     isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> deleteTodo(String id) async {
+    await _service.deleteTodo(id);
+    _todos.removeWhere((element) => element.todoId == id);
     notifyListeners();
   }
 }
