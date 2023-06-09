@@ -9,6 +9,15 @@ class TodoService {
   TodoService();
 
   Future<List<TodoItem>> getTodoItems() async {
+    // fake todos to save number of API requests
+    const fake = false;
+    if (fake) {
+      return <TodoItem>[
+        TodoItem(name: 'test1 pretty long name', todoId: 'id1-xxx-yyy-zzz'),
+        TodoItem(name: 'test2 pretty long name', todoId: 'id2-xxx-yyy-zzz'),
+      ];
+    }
+
     var us = UserService();
     await us.init();
     var session = await us.getSession();
@@ -17,18 +26,8 @@ class TodoService {
     final response = await http.get(Uri.parse(dotenv.env['TODO_ENDPOINT']!),
         headers: headers);
     final json = jsonDecode(response.body) as List;
-    // REAL
-    /*
     List<TodoItem> items =
         json.map((model) => TodoItem.fromJson(model)).toList();
-        */
-    // FAKE
-
-    List<TodoItem> items = <TodoItem>[
-      TodoItem(name: 'test1 pretty long name', todoId: 'id1-xxx-yyy-zzz'),
-      TodoItem(name: 'test2 pretty long name', todoId: 'id2-xxx-yyy-zzz'),
-    ];
-
     return items;
   }
 
