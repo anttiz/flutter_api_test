@@ -4,7 +4,6 @@ import '../model/user.dart';
 import '../services/user_service.dart';
 
 class UserProvider extends ChangeNotifier {
-  final _service = UserService();
   User? _user = User();
   User? get user => _user;
   set user(User? user) {
@@ -12,8 +11,8 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> getUser() async {
-    await _service.init();
-    final response = await _service.getCurrentUser();
+    await UserService.init();
+    final response = await UserService.getCurrentUser();
     if (response != null) {
       _user = response;
     }
@@ -21,8 +20,13 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
-    await _service.signOut();
+    await UserService.signOut();
     _user = null;
+    notifyListeners();
+  }
+
+  Future <void> login(String username, String password) async {
+    _user = await UserService.login(username, password);
     notifyListeners();
   }
 }

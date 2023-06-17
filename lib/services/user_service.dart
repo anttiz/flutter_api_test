@@ -7,17 +7,17 @@ import '../model/user.dart';
 
 
 class UserService {
-  final CognitoUserPool _userPool = CognitoUserPool(
+  static final CognitoUserPool _userPool = CognitoUserPool(
     dotenv.env['USER_POOL_ID']!,
     dotenv.env['USER_POOL_CLIENT_ID']!,
   );
 
-  CognitoUser? _cognitoUser;
-  CognitoUserSession? _session;
-  CognitoCredentials? credentials;
+  static CognitoUser? _cognitoUser;
+  static CognitoUserSession? _session;
+  static CognitoCredentials? credentials;
 
   /// Initiate user session from local storage if present
-  Future<bool> init() async {
+  static Future<bool> init() async {
     final prefs = await SharedPreferences.getInstance();
     final storage = Storage(prefs);
     _userPool.storage = storage;
@@ -30,7 +30,8 @@ class UserService {
   }
 
   /// Get existing user from session with his/her attributes
-  Future<User?> getCurrentUser() async {
+  static Future<User?> getCurrentUser() async {
+    UserService.init();
     if (_cognitoUser == null || _session == null) {
       return null;
     }
@@ -47,7 +48,7 @@ class UserService {
   }
 
   /// Retrieve user credentials -- for use with other AWS services
-  Future<CognitoCredentials?> getCredentials() async {
+  static Future<CognitoCredentials?> getCredentials() async {
     if (_cognitoUser == null || _session == null) {
       return null;
     }
@@ -56,15 +57,15 @@ class UserService {
     return credentials;
   }
 
-  Future<CognitoUserSession?> getSession() async {
+  static Future<CognitoUserSession?> getSession() async {
     if (_session == null) {
-      return null;
+      await UserService.init();
     }
     return _session;
   }
 
   /// Login user
-  Future<User> login(String username, String password) async {
+  static Future<User> login(String username, String password) async {
     _cognitoUser = CognitoUser(username, _userPool, storage: _userPool.storage);
 
     final authDetails = AuthenticationDetails(
@@ -137,7 +138,7 @@ class UserService {
   }
   */
 
-  Future<void> signOut() async {
+  static Future<void> signOut() async {
     if (credentials != null) {
       await credentials!.resetAwsCredentials();
     }

@@ -29,9 +29,7 @@ class TodoService {
       fakeInit();
       return _todos;
     }
-    var us = UserService();
-    await us.init();
-    var session = await us.getSession();
+    var session = await UserService.getSession();
     Map<String, String> headers = Map.from(
         {'Authorization': 'Bearer ${session!.getIdToken().getJwtToken()}'});
     final response = await http.get(Uri.parse(dotenv.env['TODO_ENDPOINT']!),
@@ -48,9 +46,7 @@ class TodoService {
       _todos.add(item);
       return item;
     }
-    var us = UserService();
-    await us.init();
-    var session = await us.getSession();
+    var session = await UserService.getSession();
     Map data = {'name': name};
     var body = json.encode(data);
     Map<String, String> headers = Map.from(
@@ -67,9 +63,7 @@ class TodoService {
       _todos.removeWhere((element) => element.todoId == id);
       return;
     }
-    var us = UserService();
-    await us.init();
-    var session = await us.getSession();
+    var session = await UserService.getSession();
     Map data = {'id': id};
     var body = json.encode(data);
     Map<String, String> headers = Map.from(

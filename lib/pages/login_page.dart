@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-import '../model/user.dart';
 import '../provider/user_provider.dart';
-import '../services/user_service.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -25,10 +23,7 @@ class _LoginPageState extends State<LoginPage> {
       required String username,
       required String password}) async {
     _formKey.currentState?.save();
-    var userService = UserService();
-    await userService.init();
-    User user = await userService.login(username, password);
-    provider.user = user;
+    await provider.login(username, password);
     // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,

@@ -11,9 +11,8 @@ import 'color_schemes.g.dart';
 
 void main() async {
   await dotenv.load();
-  var us = UserService();
-  await us.init();
-  var user = await us.getCurrentUser();
+  UserService.init();
+  var user = await UserService.getCurrentUser();
   var initialRoute = user != null ? '/home' : '/';
   runApp(MainApp(initialRoute:initialRoute));
 }
