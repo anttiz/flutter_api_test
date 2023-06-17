@@ -50,7 +50,7 @@ class MainApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
         darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
-        themeMode: ThemeMode.light, // Default is system
+        themeMode: ThemeMode.system, // Default is system
         routes: {
         '/': (context) => LoginPage(),
         '/home': (context) => HomePage(),

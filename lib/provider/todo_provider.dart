@@ -4,7 +4,6 @@ import '../model/todo_item.dart';
 import '../services/todo_service.dart';
 
 class TodoProvider extends ChangeNotifier {
-  final _service = TodoService();
   bool isLoading = false;
   List<TodoItem> _todos = [];
   List<TodoItem> get todos => _todos;
@@ -13,10 +12,9 @@ class TodoProvider extends ChangeNotifier {
     // isLoading = true;
     // notifyListeners();
 
-    final response = await _service.addTodo(name);
-    if (!_service.isFake) {
-      _todos.add(response);
-    }
+    await TodoService.addTodo(name);
+    _todos = TodoService.todos;
+    isLoading = false;
     notifyListeners();
   }
 
@@ -24,15 +22,18 @@ class TodoProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final response = await _service.getTodoItems();
+    final response = await TodoService.getTodoItems();
     _todos = response;
     isLoading = false;
     notifyListeners();
   }
 
   Future<void> deleteTodo(String id) async {
-    await _service.deleteTodo(id);
+    // isLoading = true;
+    // notifyListeners();
+    await TodoService.deleteTodo(id);
     _todos.removeWhere((element) => element.todoId == id);
+    isLoading = false;
     notifyListeners();
   }
 }

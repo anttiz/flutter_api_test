@@ -7,22 +7,26 @@ import 'package:uuid/uuid.dart';
 import '../model/todo_item.dart';
 
 class TodoService {
-  List<TodoItem> _todos = [];
-    // fake todos to save number of API requests
-  final _fake = true;
-  get isFake => _fake;
+  static List<TodoItem> _todos = [];
+  // fake todos to save number of API requests
+  static bool _fake = true;
+  static bool _fakeInitialised = false;
+  static get isFake => _fake;
+  static get todos => _todos;
 
-  TodoService() {
-    if (_fake) {
+  static fakeInit() {
+    if (_fake && !_fakeInitialised) {
       _todos = <TodoItem>[
         TodoItem(name: 'test1 pretty long name', todoId: Uuid().v1()),
         TodoItem(name: 'test2 pretty long name', todoId: Uuid().v1()),
       ];
+      _fakeInitialised = true;
     }
   }
 
-  Future<List<TodoItem>> getTodoItems() async {
+  static Future<List<TodoItem>> getTodoItems() async {
     if (_fake) {
+      fakeInit();
       return _todos;
     }
     var us = UserService();
@@ -38,7 +42,7 @@ class TodoService {
     return items;
   }
 
-  Future<TodoItem> addTodo(String name) async {
+  static Future<TodoItem> addTodo(String name) async {
     if (_fake) {
       var item = TodoItem(todoId: Uuid().v1(), name: name);
       _todos.add(item);
@@ -53,10 +57,12 @@ class TodoService {
         {'Authorization': 'Bearer ${session!.getIdToken().getJwtToken()}'});
     final response = await http.post(Uri.parse(dotenv.env['TODO_ENDPOINT']!),
         headers: headers, body: body);
-    return TodoItem.fromJson(json.decode(response.body));
+    TodoItem item = TodoItem.fromJson(json.decode(response.body));
+    _todos.add(item);
+    return item;
   }
 
-  Future<void> deleteTodo(String id) async {
+  static Future<void> deleteTodo(String id) async {
     if (_fake) {
       _todos.removeWhere((element) => element.todoId == id);
       return;
