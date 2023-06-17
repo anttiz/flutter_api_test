@@ -12,6 +12,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> getUser() async {
+    await _service.init();
     final response = await _service.getCurrentUser();
     if (response != null) {
       _user = response;

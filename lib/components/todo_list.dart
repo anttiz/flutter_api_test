@@ -43,16 +43,20 @@ class TodoList extends StatelessWidget {
                                         .withOpacity(0.5);
                                   }
                                   */
-                                  return Theme.of(context)
-                                      .colorScheme
-                                      .error
-                                      .withOpacity(0.5);
+                                  return Theme.of(context).colorScheme.error;
                                 },
                               ),
+                              /*
                               foregroundColor:
                                   MaterialStateProperty.resolveWith<Color?>(
                                       (Set<MaterialState> states) {
                                 return Colors.white;
+                              }),
+                              */
+                              foregroundColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                return Theme.of(context).colorScheme.onError;
                               }),
                             ),
                             onPressed: () async {

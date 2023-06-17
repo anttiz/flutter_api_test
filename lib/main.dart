@@ -7,11 +7,13 @@ import 'package:flutter_api_test/services/user_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
+import 'color_schemes.g.dart';
+
 void main() async {
   await dotenv.load();
-  var service = UserService();
-  await service.init();
-  var user = await service.getCurrentUser();
+  var us = UserService();
+  await us.init();
+  var user = await us.getCurrentUser();
   var initialRoute = user != null ? '/home' : '/';
   runApp(MainApp(initialRoute:initialRoute));
 }
@@ -46,10 +48,9 @@ class MainApp extends StatelessWidget {
         title: 'Test app',
         initialRoute: initialRoute,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        ),
+        theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+        darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
+        themeMode: ThemeMode.light, // Default is system
         routes: {
         '/': (context) => LoginPage(),
         '/home': (context) => HomePage(),

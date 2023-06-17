@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_api_test/components/user_details.dart';
+import 'package:flutter_api_test/components/home_contents.dart';
 import 'package:flutter_api_test/pages/login_page.dart';
+import 'package:flutter_api_test/pages/todo_page.dart';
+import 'package:flutter_api_test/pages/user_page.dart';
 import 'package:provider/provider.dart';
 
 import '../components/dialog.dart';
-import '../components/todo_list.dart';
 import '../provider/todo_provider.dart';
 import '../provider/user_provider.dart';
 
@@ -16,6 +17,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    HomeContents(),
+    TodoPage(),
+    UserPage()
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -27,31 +36,47 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    var bottomNavigationBarItems = <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.home),
+        label: 'Home',
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.add),
+        label: 'Add todo',
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.account_circle),
+        label: 'account',
+      ),
+    ];
     return Consumer<UserProvider>(builder: (context, provider, child) {
       return Scaffold(
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          floatingActionButton: SizedBox(
+          floatingActionButton: _selectedIndex == 1 ? SizedBox(
             height: 100,
             width: 100,
             child: FloatingActionButton(
-                // shape:
-                // BeveledRectangleBorder(borderRadius: BorderRadius.zero),
                 onPressed: () {
                   Navigator.of(context).restorablePush(dialogBuilder);
                 },
                 tooltip: "Add new TODO",
                 child: Icon(Icons.add)),
-          ),
+          ):null,
           appBar: AppBar(
-              elevation: 4,
+              elevation: 5,
               title: const Text('Todo list'),
-              leading: IconButton(
-                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-                icon: const Icon(Icons.menu),
-                onPressed: () {},
-              ),
               actions: [
                 PopupMenuButton<Text>(
                   itemBuilder: (context) {
@@ -74,16 +99,19 @@ class _HomePageState extends State<HomePage> {
                   },
                 )
               ]),
-          body: Consumer<TodoProvider>(builder: (context, provider, child) {
-            if (provider.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final todos = provider.todos;
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [UserDetails(todos.length), TodoList(todos)]);
-          }));
+          body: _widgetOptions.elementAt(_selectedIndex),
+          bottomNavigationBar: BottomNavigationBar(
+            items: bottomNavigationBarItems,
+            currentIndex: _selectedIndex,
+            type: BottomNavigationBarType.fixed,
+            selectedFontSize: textTheme.bodySmall!.fontSize!,
+            unselectedFontSize: textTheme.bodySmall!.fontSize!,
+            onTap: _onItemTapped,
+            selectedItemColor: colorScheme.onPrimary,
+            unselectedItemColor: colorScheme.onPrimary.withOpacity(0.38),
+            backgroundColor: colorScheme.primary,
+            elevation: 5,
+          ));
     });
   }
 }

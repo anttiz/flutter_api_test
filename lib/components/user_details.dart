@@ -4,16 +4,14 @@ import 'package:provider/provider.dart';
 import '../provider/user_provider.dart';
 
 class UserDetails extends StatelessWidget {
-  final int itemCount;
-
-  UserDetails(this.itemCount);
+  UserDetails();
 
   @override
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.all(16),
         child: Consumer<UserProvider>(builder: (context, provider, child) {
-          if (provider.user!.name == null) {
+          if (provider.user == null || provider.user?.name == null) {
             return Column();
           }
           return Column(
@@ -22,7 +20,6 @@ class UserDetails extends StatelessWidget {
             children: [
               Text('User: ${provider.user!.name!}'),
               Text('Email: ${provider.user!.email!}'),
-              Text('TODO items: ${itemCount.toString()}'),
             ],
           );
         }));

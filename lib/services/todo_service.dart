@@ -9,7 +9,7 @@ import '../model/todo_item.dart';
 class TodoService {
   List<TodoItem> _todos = [];
     // fake todos to save number of API requests
-  final _fake = false;
+  final _fake = true;
   get isFake => _fake;
 
   TodoService() {
