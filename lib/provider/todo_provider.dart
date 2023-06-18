@@ -13,7 +13,7 @@ class TodoProvider extends ChangeNotifier {
     // notifyListeners();
 
     await TodoService.addTodo(name);
-    await TodoService.getTodoItems();
+    // await TodoService.getTodoItems();
     _todos = TodoService.todos;
     isLoading = false;
     notifyListeners();

@@ -9,7 +9,7 @@ import '../model/todo_item.dart';
 class TodoService {
   static List<TodoItem> _todos = [];
   // fake todos to save number of API requests
-  static bool _fake = false;
+  static bool _fake = true;
   static bool _fakeInitialised = false;
   static get isFake => _fake;
   static get todos => _todos;
@@ -37,6 +37,7 @@ class TodoService {
     final json = jsonDecode(response.body) as List;
     List<TodoItem> items =
         json.map((model) => TodoItem.fromJson(model)).toList();
+    _todos = items;
     return items;
   }
 
