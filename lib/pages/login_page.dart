@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 5,
-        title: Text('login'),
+        title: Text('Login'),
       ),
       body: Form(
         key: _formKey,

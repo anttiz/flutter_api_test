@@ -6,7 +6,6 @@ import 'package:flutter_api_test/pages/user_page.dart';
 import 'package:provider/provider.dart';
 
 import '../components/dialog.dart';
-import '../provider/todo_provider.dart';
 import '../provider/user_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,12 +27,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<TodoProvider>(context, listen: false).getAllTodos();
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<UserProvider>(context, listen: false).getUser();
-    });
   }
 
   void _onItemTapped(int index) {
